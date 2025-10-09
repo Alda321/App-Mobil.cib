@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_platos"
+        android:title="Platos" />
+    <item
+        android:id="@+id/nav_pedidos"
+        android:title="Pedidos" />
+    <item
+        android:id="@+id/nav_lista_general"
+        android:title="Lista" />
+    <item
+        android:id="@+id/nav_usuarios"
+        android:title="Usuarios" />
+</menu>

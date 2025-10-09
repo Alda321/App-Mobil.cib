@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#FAFAFA">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Título principal -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Gestión de Pedidos"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:gravity="center"
+            android:paddingBottom="12dp" />
+
+        <!-- Campo Número de mesa -->
+        <EditText
+            android:id="@+id/edtNumeroMesa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Número de Mesa"
+            android:inputType="number"
+            android:padding="8dp"
+            android:background="@android:drawable/edit_text"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Campo Comentario -->
+        <EditText
+            android:id="@+id/edtComentario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Comentario (opcional)"
+            android:padding="8dp"
+            android:background="@android:drawable/edit_text"
+            android:layout_marginBottom="8dp" />
+        <!-- Spinner para seleccionar el plato -->
+        <Spinner
+            android:id="@+id/spnPlato"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Campo Cantidad -->
+        <EditText
+            android:id="@+id/edtCantidad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Cantidad"
+            android:inputType="number"
+            android:padding="8dp"
+            android:background="@android:drawable/edit_text"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Spinner Estado -->
+        <Spinner
+            android:id="@+id/spnEstado"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:entries="@array/estados_pedido" />
+
+        <!-- CheckBox Pagado -->
+        <CheckBox
+            android:id="@+id/chkPagado"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pagado"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Botón Guardar Pedido -->
+        <Button
+            android:id="@+id/btnGuardarPedido"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Guardar Pedido"
+            android:backgroundTint="#4CAF50"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Línea divisoria -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#CCCCCC"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Título de lista -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Lista de Pedidos"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:paddingBottom="8dp"
+            android:textColor="#333333" />
+
+
+
+        <!-- RecyclerView para mostrar pedidos -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerPedidos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp" />
+
+    </LinearLayout>
+</ScrollView>

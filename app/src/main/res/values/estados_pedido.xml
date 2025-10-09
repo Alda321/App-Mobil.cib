@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="estados_pedido">
+        <item>Pendiente</item>
+        <item>Preparando</item>
+        <item>Listo</item>
+        <item>Cancelado</item>
+        <item>Servido</item>
+    </string-array>
+
+</resources>
