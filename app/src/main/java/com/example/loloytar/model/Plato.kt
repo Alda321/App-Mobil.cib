@@ -1,8 +1,8 @@
-package model
+package com.example.loloytar.model
 
 data class Plato(
-    val id: Int = 0,
-    val nombre: String = "",
-    val precio: Double = 0.0,
-    val activo: Boolean = true
+    val id: Int,
+    val nombre: String,
+    val precio: Double,
+    val activo: Boolean
 )
