@@ -12,7 +12,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class CrearPlato : AppCompatActivity() {
+class CrearPlatoActivity : AppCompatActivity() {
 
     private lateinit var inputNombre: EditText
     private lateinit var inputPrecio: EditText
@@ -64,15 +64,15 @@ class CrearPlato : AppCompatActivity() {
             override fun onResponse(call: Call<Plato>, response: Response<Plato>) {
                 if (response.isSuccessful) {
                     val platoGuardado = response.body()
-                    Toast.makeText(this@CrearPlato, "Plato guardado: ${platoGuardado?.nombre}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@CrearPlatoActivity, "Plato guardado: ${platoGuardado?.nombre}", Toast.LENGTH_SHORT).show()
                     finish()
                 } else {
-                    Toast.makeText(this@CrearPlato, "Error del servidor: ${response.code()}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@CrearPlatoActivity, "Error del servidor: ${response.code()}", Toast.LENGTH_LONG).show()
                 }
             }
 
             override fun onFailure(call: Call<Plato>, t: Throwable) {
-                Toast.makeText(this@CrearPlato, "Error de red: ${t.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@CrearPlatoActivity, "Error de red: ${t.message}", Toast.LENGTH_LONG).show()
             }
         })
     }

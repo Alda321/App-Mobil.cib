@@ -14,6 +14,8 @@ import com.example.loloytar.model.Plato
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.SimpleDateFormat
+import java.util.*
 
 class PedidoActivity : AppCompatActivity() {
 
@@ -28,11 +30,13 @@ class PedidoActivity : AppCompatActivity() {
     private lateinit var btnGuardar: Button
 
     private var listaPlatos: List<Plato> = listOf()
+    private var listaPedidos: List<Pedido> = listOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pedido)
 
+        // Referencias a vistas
         recycler = findViewById(R.id.recyclerPedidos)
         edtNumeroMesa = findViewById(R.id.edtNumeroMesa)
         edtComentario = findViewById(R.id.edtComentario)
@@ -42,51 +46,63 @@ class PedidoActivity : AppCompatActivity() {
         spnPlato = findViewById(R.id.spnPlato)
         btnGuardar = findViewById(R.id.btnGuardarPedido)
 
+        // RecyclerView
+        recycler.isNestedScrollingEnabled = false
         recycler.layoutManager = LinearLayoutManager(this)
 
         btnGuardar.setOnClickListener { guardarPedido() }
 
+        // Cargar datos
         cargarPlatos()
-        cargarPedidos()
     }
 
     private fun cargarPlatos() {
-        val call = RetrofitInstance.platoApi.getPlatos()
-        call.enqueue(object : Callback<List<Plato>> {
+        RetrofitInstance.platoApi.getPlatos().enqueue(object : Callback<List<Plato>> {
             override fun onResponse(call: Call<List<Plato>>, response: Response<List<Plato>>) {
-                if (response.isSuccessful) {
-                    listaPlatos = response.body() ?: emptyList()
-                    val nombres = listaPlatos.map { it.nombre }
-                    val adapter = ArrayAdapter(this@PedidoActivity, android.R.layout.simple_spinner_item, nombres)
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                    spnPlato.adapter = adapter
-                } else {
-                    Toast.makeText(applicationContext, "❌ Error al cargar platos", Toast.LENGTH_SHORT).show()
-                }
-            }
+                listaPlatos = response.body() ?: emptyList()
+                val spinnerAdapter = ArrayAdapter(
+                    this@PedidoActivity,
+                    android.R.layout.simple_spinner_item,
+                    listaPlatos.map { it.nombre }
+                )
+                spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                spnPlato.adapter = spinnerAdapter
 
+                cargarPedidosConDetalles() // cargar pedidos después de platos
+            }
             override fun onFailure(call: Call<List<Plato>>, t: Throwable) {
-                Toast.makeText(applicationContext, "⚠️ Error de conexión al cargar platos", Toast.LENGTH_SHORT).show()
+                cargarPedidosConDetalles()
             }
         })
     }
 
-    private fun cargarPedidos() {
-        val call = RetrofitInstance.pedidosApi.getPedidos()
-        call.enqueue(object : Callback<List<Pedido>> {
+    private fun cargarPedidosConDetalles() {
+        // 1. Obtener pedidos
+        RetrofitInstance.pedidosApi.getPedidos().enqueue(object : Callback<List<Pedido>> {
             override fun onResponse(call: Call<List<Pedido>>, response: Response<List<Pedido>>) {
-                if (response.isSuccessful) {
-                    val listaPedidos = response.body() ?: emptyList()
-                    adapter = PedidoAdapter(listaPedidos)
-                    recycler.adapter = adapter
-                } else {
-                    Toast.makeText(applicationContext, "❌ Error al obtener pedidos", Toast.LENGTH_SHORT).show()
-                }
-            }
+                if (!response.isSuccessful) return
+                val pedidos = response.body() ?: emptyList()
 
-            override fun onFailure(call: Call<List<Pedido>>, t: Throwable) {
-                Toast.makeText(applicationContext, "⚠️ Error de conexión", Toast.LENGTH_SHORT).show()
+                // 2. Obtener detalles
+                RetrofitInstance.pedidosDetalleApi.getPedidoDetalles().enqueue(object : Callback<List<PedidoDetalle>> {
+                    override fun onResponse(call: Call<List<PedidoDetalle>>, response: Response<List<PedidoDetalle>>) {
+                        if (!response.isSuccessful) return
+                        val detalles = response.body() ?: emptyList()
+
+                        // 3. Asignar detalles a cada pedido
+                        listaPedidos = pedidos.map { pedido ->
+                            val detallesDelPedido = detalles.filter { it.pedidoId == pedido.id }
+                            pedido.copy(detalles = detallesDelPedido)
+                        }
+
+                        // 4. Asignar al adapter
+                        adapter = PedidoAdapter(listaPedidos, listaPlatos)
+                        recycler.adapter = adapter
+                    }
+                    override fun onFailure(call: Call<List<PedidoDetalle>>, t: Throwable) {}
+                })
             }
+            override fun onFailure(call: Call<List<Pedido>>, t: Throwable) {}
         })
     }
 
@@ -94,56 +110,63 @@ class PedidoActivity : AppCompatActivity() {
         val numeroMesa = edtNumeroMesa.text.toString()
         val comentario = edtComentario.text.toString()
         val cantidadStr = edtCantidad.text.toString()
-        val pagado = chkPagado.isChecked
         val estado = spnEstado.selectedItemPosition
+        val pagado = chkPagado.isChecked
+        val platoSeleccionado = listaPlatos.getOrNull(spnPlato.selectedItemPosition) ?: return
 
-        if (numeroMesa.isEmpty() || cantidadStr.isEmpty()) {
-            Toast.makeText(this, "⚠️ Ingrese todos los datos requeridos", Toast.LENGTH_SHORT).show()
-            return
-        }
+        if (numeroMesa.isEmpty() || cantidadStr.isEmpty()) return
+        val cantidad = cantidadStr.toIntOrNull() ?: return
+        if (cantidad <= 0) return
 
-        val cantidad = cantidadStr.toIntOrNull()
-        if (cantidad == null || cantidad <= 0) {
-            Toast.makeText(this, "⚠️ Cantidad no válida", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val platoSeleccionado = listaPlatos.getOrNull(spnPlato.selectedItemPosition)
-        if (platoSeleccionado == null) {
-            Toast.makeText(this, "⚠️ Seleccione un plato", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val detalle = PedidoDetalle(
-            platoId = platoSeleccionado.id,
-            cantidad = cantidad
-        )
-
+        val fechaActual = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).format(Date())
         val pedido = Pedido(
             numeroMesa = numeroMesa,
-            fecha = "2025-10-21",
+            fecha = fechaActual,
             estado = estado,
             pagado = pagado,
             comentario = comentario,
-            mozoId = 1,
-            detalles = listOf(detalle)
+            mozoId = 1
         )
 
-        val call = RetrofitInstance.pedidosApi.postPedido(pedido)
-        call.enqueue(object : Callback<Pedido> {
+        // 1️⃣ Crear el pedido
+        RetrofitInstance.pedidosApi.postPedido(pedido).enqueue(object : Callback<Pedido> {
             override fun onResponse(call: Call<Pedido>, response: Response<Pedido>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(applicationContext, "✅ Pedido guardado correctamente", Toast.LENGTH_SHORT).show()
-                    cargarPedidos()
-                } else {
-                    Toast.makeText(applicationContext, "❌ Error al guardar pedido", Toast.LENGTH_SHORT).show()
+                    val pedidoCreado = response.body() ?: return
+
+                    // 2️⃣ Crear el detalle del pedido usando el pedidoId recién creado
+                    val detalle = PedidoDetalle(
+                        pedidoId = pedidoCreado.id,
+                        platoId = platoSeleccionado.id,
+                        cantidad = cantidad
+                    )
+
+                    RetrofitInstance.pedidosDetalleApi.postPedidoDetalle(detalle)
+                        .enqueue(object : Callback<PedidoDetalle> {
+                            override fun onResponse(
+                                call: Call<PedidoDetalle>,
+                                response: Response<PedidoDetalle>
+                            ) {
+                                limpiarCampos()
+                                cargarPedidosConDetalles() // actualizar RecyclerView
+                            }
+
+                            override fun onFailure(call: Call<PedidoDetalle>, t: Throwable) {}
+                        })
                 }
             }
 
-            override fun onFailure(call: Call<Pedido>, t: Throwable) {
-                Toast.makeText(applicationContext, "⚠️ Error de conexión: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
+            override fun onFailure(call: Call<Pedido>, t: Throwable) {}
         })
     }
 
+
+    private fun limpiarCampos() {
+        edtNumeroMesa.text.clear()
+        edtComentario.text.clear()
+        edtCantidad.text.clear()
+        chkPagado.isChecked = false
+        spnPlato.setSelection(0)
+        spnEstado.setSelection(0)
+    }
 }

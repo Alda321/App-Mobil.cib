@@ -1,5 +1,7 @@
 package com.example.loloytar.adapters
 
+import android.icu.text.SimpleDateFormat
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,9 +9,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.loloytar.R
 import com.example.loloytar.model.Pedido
+import com.example.loloytar.model.Plato
+import java.util.Locale
 
-class PedidoAdapter(private var pedidos: List<Pedido>) :
-    RecyclerView.Adapter<PedidoAdapter.PedidoViewHolder>() {
+class PedidoAdapter(
+    private var pedidos: List<Pedido>,
+    private val listaPlatos: List<Plato>
+) : RecyclerView.Adapter<PedidoAdapter.PedidoViewHolder>() {
 
     inner class PedidoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val txtNumeroMesa: TextView = itemView.findViewById(R.id.txtNumeroMesa)
@@ -32,19 +38,18 @@ class PedidoAdapter(private var pedidos: List<Pedido>) :
         holder.txtNumeroMesa.text = "Mesa: ${pedido.numeroMesa}"
         holder.txtComentario.text = "Comentario: ${pedido.comentario}"
         holder.txtPagado.text = "Pagado: ${if (pedido.pagado) "Sí" else "No"}"
-        holder.txtFecha.text = "Fecha: ${pedido.fecha.take(16)}"
 
-        // 👇 Si tienes lista de detalles (platos)
-        if (pedido.detalles.isNotEmpty()) {
-            val platosTexto = pedido.detalles.joinToString("\n") {
-                val nombrePlato = it.plato?.nombre ?: "Plato #${it.platoId}"
-                "${nombrePlato} (x${it.cantidad})"
-            }
-            holder.txtPlato.text = platosTexto
-    } else {
-            holder.txtPlato.text = "Sin platos"
+        // Formatear fecha
+        val formatoApi = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS", Locale.getDefault())
+        val formatoMostrar = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+        val fecha = try {
+            formatoApi.parse(pedido.fecha)?.let { formatoMostrar.format(it) } ?: pedido.fecha
+        } catch (e: Exception) {
+            pedido.fecha
         }
+        holder.txtFecha.text = "Fecha: $fecha"
 
+        // Mostrar estado
         val estadoTexto = when (pedido.estado) {
             0 -> "Pendiente"
             1 -> "Preparando"
@@ -53,10 +58,18 @@ class PedidoAdapter(private var pedidos: List<Pedido>) :
             4 -> "Cancelado"
             else -> "Desconocido"
         }
-
         holder.txtEstado.text = "Estado: $estadoTexto"
-    }
 
+        // Mostrar nombres de los platos
+        holder.txtPlato.text = if (!pedido.detalles.isNullOrEmpty()) {
+            "Platos: " + pedido.detalles.joinToString { detalle ->
+                val platoNombre = listaPlatos.find { it.id == detalle.platoId }?.nombre ?: "Desconocido"
+                "$platoNombre x${detalle.cantidad}"
+            }
+        } else {
+            "Platos: -"
+        }
+    }
 
     override fun getItemCount(): Int = pedidos.size
 

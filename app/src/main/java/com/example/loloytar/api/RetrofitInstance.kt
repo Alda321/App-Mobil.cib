@@ -1,15 +1,37 @@
 package com.example.loloytar.api
 
-import api.PlatoApi
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.create
 
 object RetrofitInstance {
-    val api: PlatoApi by lazy {
+
+    private const val BASE_URL = "https://modeloweb.azurewebsites.net/api/"
+
+    private val retrofit by lazy {
         Retrofit.Builder()
-            .baseUrl("https://proyecto-loloyta-f9akefdbh7fxf4ac.eastus-01.azurewebsites.net/api/")
+            .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(PlatoApi::class.java)
+    }
+
+    // API para platos
+    val platoApi: PlatoApi by lazy {
+        retrofit.create(PlatoApi::class.java)
+    }
+
+    // API para usuarios
+    val usuarioApi: UsuarioApi by lazy {
+        retrofit.create(UsuarioApi::class.java)
+    }
+
+    //API para Pedidos
+    val pedidosApi: PedidoApi by lazy {
+        retrofit.create(PedidoApi::class.java)
+    }
+
+    //API para Detalle de pedido
+    val pedidosDetalleApi: PedidoDetalleApi by lazy {
+        retrofit.create(PedidoDetalleApi::class.java)
     }
 }

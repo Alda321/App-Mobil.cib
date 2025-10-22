@@ -1,10 +1,10 @@
 package com.example.loloytar.model
 
 class Usuario {
-    val id: Int? = null
-    val nombre: String = ""
-    val login: String = ""
-    val password: String = ""
-    val rol: String = ""
-    val activo: Boolean = true
+    var id: Int? = null
+    var nombre: String = ""
+    var login: String = ""
+    var password: String = ""
+    var rol: String = ""
+    var activo: Boolean = true
 }

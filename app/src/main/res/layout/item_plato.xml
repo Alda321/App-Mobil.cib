@@ -2,21 +2,57 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="12dp">
+    android:orientation="horizontal"
+    android:padding="12dp"
+    android:gravity="center_vertical">
 
-    <TextView
-        android:id="@+id/tvNombre"
+    <!-- Indicador de estado -->
+    <View
+        android:id="@+id/viewEstado"
+        android:layout_width="18dp"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="8dp"
+        android:background="@color/red" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvNombre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nombre del plato"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvPrecio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="S/. 0.00"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <!-- Botón de estado: Activo / Inactivo -->
+    <Button
+        android:id="@+id/btnEstado"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Nombre del plato"
-        android:textSize="40sp"
-        android:textStyle="bold" />
+        android:text="Activo" />
 
-    <TextView
-        android:id="@+id/tvPrecio"
+    <Button
+        android:id="@+id/btnEditar"
+        android:layout_width="73dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="Editar" />
+
+    <Button
+        android:id="@+id/btnEliminar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="S/. 0.00"
-        android:textSize="26sp" />
+        android:text="Eliminar" />
 </LinearLayout>

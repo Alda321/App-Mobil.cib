@@ -1,38 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_pedido_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="8dp"
-    android:background="#FFFFFF"
-    android:layout_marginBottom="8dp"
-    android:elevation="2dp">
+    android:padding="12dp"
+    android:background="@drawable/item_background"
+    android:layout_marginBottom="8dp">
 
-    <TextView android:id="@+id/txtNumeroMesa"
+    <!-- Número de mesa -->
+    <TextView
+        android:id="@+id/txtNumeroMesa"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Mesa: 1"
         android:textStyle="bold"
-        android:textColor="#000000"
-        android:textSize="16sp"/>
+        android:textSize="16sp"
+        android:textColor="@android:color/black" />
 
-    <TextView android:id="@+id/txtPlato"
+    <!-- Estado -->
+    <TextView
+        android:id="@+id/txtEstado"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:text="Estado: Pendiente"
+        android:textSize="14sp"
+        android:textColor="@android:color/holo_blue_dark"
+        android:layout_marginTop="4dp" />
 
-    <TextView android:id="@+id/txtEstado"
+    <!-- Comentario -->
+    <TextView
+        android:id="@+id/txtComentario"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:text="Comentario: Sin salsa"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp" />
 
-    <TextView android:id="@+id/txtComentario"
+    <!-- Pagado -->
+    <TextView
+        android:id="@+id/txtPagado"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:text="Pagado: Sí"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp" />
 
-    <TextView android:id="@+id/txtPagado"
+    <!-- Fecha -->
+    <TextView
+        android:id="@+id/txtFecha"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:text="Fecha: 22/10/2025 14:00"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp" />
 
-    <TextView android:id="@+id/txtFecha"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    <!-- Platos -->
+    <TextView
+        android:id="@+id/txtPlato"
+        android:layout_width="362dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Platos: Pizza x1, Ensalada x2"
+        android:textColor="@android:color/holo_green_dark"
+        android:textSize="14sp" />
 
 </LinearLayout>

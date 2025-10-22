@@ -1,29 +1,30 @@
-package api
+package com.example.loloytar.api
 
 import com.example.loloytar.model.Plato
-import retrofit2.http.Body
-import retrofit2.http.DELETE
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.PUT
-import retrofit2.http.Path
+import retrofit2.Call
+import retrofit2.http.*
 
-
-interface PlatoApi{
+interface PlatoApi {
 
     @GET("Plato")
-    suspend fun getPlatos(): List<Plato>
+    fun getPlatos(): Call<List<Plato>>
 
     @GET("Plato/{id}")
-    suspend fun getPlato(@Path("id") id: Int): Plato
+    fun getPlato(@Path("id") id: Int): Call<Plato>
 
     @POST("Plato")
-    suspend fun postPlato(@Body plato: Plato): Plato
+    fun postPlato(@Body plato: Plato): Call<Plato>
 
     @PUT("Plato/{id}")
-    suspend fun putPlato(@Path("id") id: Int, @Body plato: Plato): Plato
+    fun putPlato(@Path("id") id: Int, @Body plato: Plato): Call<Plato>
 
     @DELETE("Plato/{id}")
-    suspend fun deletePlato(@Path("id") id: Int)
-}
+    fun deletePlato(@Path("id") id: Int): Call<Void>
 
+    @PATCH("Plato/activar/{id}")
+    fun activarPlato(@Path("id") id: Int): Call<Void>
+
+    @PATCH("Plato/desactivar/{id}")
+    fun desactivarPlato(@Path("id") id: Int): Call<Void>
+
+}

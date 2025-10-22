@@ -18,6 +18,7 @@ interface PedidoApi {
 
     @POST("Pedidos/Create")
     fun crearPedido(@Body pedido: Pedido): Call<Void>
+
     @POST("Pedido")
     fun postPedido(@Body pedido: Pedido): Call<Pedido>
 

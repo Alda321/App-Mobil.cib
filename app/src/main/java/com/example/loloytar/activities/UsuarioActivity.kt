@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.loloytar.R
 import com.example.loloytar.adapter.UsuarioAdapter
 import com.example.loloytar.api.RetrofitInstance
+import com.example.loloytar.model.Usuario
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 
@@ -53,18 +54,25 @@ class UsuarioActivity : AppCompatActivity() {
 
     private fun obtenerUsuarios() {
         progressBar.visibility = View.VISIBLE
-        lifecycleScope.launch {
-            try {
-                val listaUsuarios = RetrofitInstance.usuarioApi.getUsuarios()
-                usuarioAdapter = UsuarioAdapter(listaUsuarios)
-                recyclerUsuarios.adapter = usuarioAdapter
-            } catch (e: Exception) {
-                Toast.makeText(this@UsuarioActivity, "Error al cargar usuarios", Toast.LENGTH_SHORT).show()
-            } finally {
+        RetrofitInstance.usuarioApi.getUsuarios().enqueue(object : retrofit2.Callback<List<Usuario>> {
+            override fun onResponse(call: retrofit2.Call<List<Usuario>>, response: retrofit2.Response<List<Usuario>>) {
                 progressBar.visibility = View.GONE
+                if (response.isSuccessful) {
+                    val listaUsuarios = response.body() ?: emptyList()
+                    usuarioAdapter = UsuarioAdapter(listaUsuarios)
+                    recyclerUsuarios.adapter = usuarioAdapter
+                } else {
+                    Toast.makeText(this@UsuarioActivity, "Error al cargar usuarios", Toast.LENGTH_SHORT).show()
+                }
             }
-        }
+
+            override fun onFailure(call: retrofit2.Call<List<Usuario>>, t: Throwable) {
+                progressBar.visibility = View.GONE
+                Toast.makeText(this@UsuarioActivity, "Error de conexión", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
+
 
     private fun guardarUsuario() {
         val nombre = edtNombre.text.toString()
@@ -99,7 +107,7 @@ class UsuarioActivity : AppCompatActivity() {
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_platos -> {
-                    startActivity(android.content.Intent(this, Index::class.java))
+                    startActivity(android.content.Intent(this, PlatoActivity::class.java))
                     true
                 }
                 R.id.nav_pedidos -> {
